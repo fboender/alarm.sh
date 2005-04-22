@@ -1,0 +1,60 @@
+alarm.sh
+
+About
+----------------------------------------------------------------------------
+	Small shell script to inform you of events at certain times.
+
+Install
+----------------------------------------------------------------------------
+	Just 'cp alarm.sh /usr/local/bin'
+
+Usage
+----------------------------------------------------------------------------
+
+	alarm.sh can run in two modes. The first is the daemon mode in which it
+	will notify you of events when they occur and the other is the edit 
+	mode through which you can add, change, delete and list events. alarm.sh
+	in daemon mode should be run under X.
+
+	Daemon mode (actually receiving notifications)
+	----------------------------------------------
+	$ DISPLAY=localhost:0
+	$ export DISPLAY
+	$ ./alarm.sh --daemon&
+	
+	Adding alarms
+	-------------
+	$ alarm.sh -n -t "20:15" -m "Meet and greet with John in 15 minutes" 
+	$ alarm.sh -n -r -t "friday" -m "Friday beer-drinking competition tonight"
+
+	Changing alarm
+	--------------
+	$ alarm.sh -c -i2 -t "thursday" -m "Thursday beer-drinking competition tonight"
+
+	Deleting alarm
+	--------------
+	$ alarm.sh -d -i2
+
+	Listing set alarms
+	------------------
+	$ dev/alarm/alarm.sh -l
+
+	 id | m |                 date | message
+	----+---+----------------------+---------------------------------------------
+	  1 |   |     2005-04-11 20:00 | Rick bellen
+	  2 |   |     2005-04-16 00:00 | Wouter verjaardag stairway vanavond
+	  3 |   |     2005-04-26 00:00 | Hardrock feest morgen
+
+	id      = Notification ID (use with -i).
+	m       = Mode ('n'ormal, 'r'ecurring).
+	date    = The absolute ('2005-04-11 20:00') or relative ('friday') date & 
+	          time of the event.
+	message = The message to show when the event is triggered.
+	
+
+Legal stuff
+----------------------------------------------------------------------------
+
+Copyright (C), 2005 Ferry Boender. Released under the General Public License
+For more information, see the COPYING file supplied with this program.                                                          
+
