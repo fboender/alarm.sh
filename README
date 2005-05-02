@@ -1,60 +1,152 @@
-alarm.sh
 
-About
-----------------------------------------------------------------------------
-	Small shell script to inform you of events at certain times.
+	 Alarm
 
-Install
-----------------------------------------------------------------------------
-	Just 'cp alarm.sh /usr/local/bin'
+		Version     : 0.2
+		Author      : Ferry Boender     f . boender @ electricmonk . nl
+		Copyright   : (C) 2005, Ferry Boender
+		License     : General Public License (GPL)
 
-Usage
-----------------------------------------------------------------------------
 
-	alarm.sh can run in two modes. The first is the daemon mode in which it
-	will notify you of events when they occur and the other is the edit 
-	mode through which you can add, change, delete and list events. alarm.sh
-	in daemon mode should be run under X.
+Table Of Contents
+-----------------------------------------------------------------------
+	1. About
+		1.1. Installation and setup
+		1.2. Requirements
+		1.3. Installation
+	2. Usage
+		2.1. Adding alerts
+		2.2. Listing set alarms
+		2.3. Changing alerts
+		2.4. Deleting alerts
+	3. Legal stuff
 
-	Daemon mode (actually receiving notifications)
-	----------------------------------------------
-	$ DISPLAY=localhost:0
-	$ export DISPLAY
-	$ ./alarm.sh --daemon&
+
+1. About
+-----------------------------------------------------------------------
+
+	Alarm is a small shell script that can aid you in alerting you of things at
+	specified times. It does this by displaying a message in X (using one of
+	the variety of X message displaying tools) at the time of the alert.
+
+	It supports a very flexible time input format (i.e. 'tomorrow', '5 may
+	2005', 'tomorrow 20:00'), one-time alerts and repeated alerts.
+
+
+1.1. Installation and setup
+-----------------------------------------------------------------------
+
+1.2. Requirements
+-----------------
+
+	Alert requires the following to be installed:
+		
+		* X11
+		
+	And at least ONE OF THE FOLLOWING programs to be installed:
+
+		   * xmessage
+		OR * dialog in combination with a terminal emulator
+		OR * gdialog
+
+1.3. Installation
+-----------------
+
+	1. Copy the 'alarm' script to a directory that is present in the path.
+	2. Add the following line to the .xinitrc file in your home directory:
+		
+		alarm --daemon&
 	
-	Adding alarms
-	-------------
-	$ alarm.sh -n -t "20:15" -m "Meet and greet with John in 15 minutes" 
-	$ alarm.sh -n -r -t "friday" -m "Friday beer-drinking competition tonight"
+2. Usage
+-----------------------------------------------------------------------
 
-	Changing alarm
-	--------------
-	$ alarm.sh -c -i2 -t "thursday" -m "Thursday beer-drinking competition tonight"
+	Alarm can run in two modes. The first is the daemon mode in which it will
+	notify you of events when they occur and the other is the edit mode through
+	which you can add, change, delete and list events. Alarm in daemon mode
+	should be run under X.
 
-	Deleting alarm
-	--------------
-	$ alarm.sh -d -i2
 
-	Listing set alarms
-	------------------
-	$ dev/alarm/alarm.sh -l
+	Below is the output of alarm --help:
+	
+	Usage: alarm [ACTION] [PARAMETERS]                          
+                                                               
+	Actions:
+	
+	  Additionally required parameters are listed in parenthesis.
+	  
+	  -n, --new    (-t, -m)       Create a new alert at timespec   
+	  -c, --change (-i, -t, -m)   Change the alert identified by id
+	  -d, --delete (-i)           Delete the alert identified by id
+	  -l, --list   ([-i])         List alert(s)                    
+		  --daemon                Start the alert daemon           
+																   
+	Parameters                                                     
+	  -t, --timespec TIMESPEC     Date/time specification at which 
+								  the alert should be triggered    
+	  -m, --message MESSAGE       Message that should be displayed 
+	  -i, --id ID                 Alarm ID that should be changed, 
+								  deleted or listed                
+	  -f, --file FILE             Use FILE as alarm file instead of
+								  the default ~/.alarms            
+	  -r, --repeat                Repetative alarm                 
+
+2.1. Adding alerts
+------------------
+
+	Here are some examples of adding one-time alerts:
+	
+	$ alarm -n -t "1 april 2005" -m "Watch out for any pranks." 
+	$ alarm -n -t "20:15" -m "Appointment with Some Person" 
+	$ alarm -n -t "+15 minutes" -m "Call back client" 
+	$ alarm -n -t "tomorrow" -m "Do a good deed" 
+
+	Here are some examples of adding repeating alerts:
+	
+	$ alarm -n -r -t "friday" -m "Every Friday: beer-drinking competition"
+	$ alarm -n -r -t "0:00" -m "Hey\! It's twelve o'clock. Get to sleep\!"
+
+
+2.2. Listing set alarms
+-----------------------
+
+	Here is an example of the output of alerts:
+
+	$ alarm -l
 
 	 id | m |                 date | message
 	----+---+----------------------+---------------------------------------------
-	  1 |   |     2005-04-11 20:00 | Rick bellen
-	  2 |   |     2005-04-16 00:00 | Wouter verjaardag stairway vanavond
-	  3 |   |     2005-04-26 00:00 | Hardrock feest morgen
+	  1 |   |     2005-04-01 00:00 | Watch out for any pranks.
+	  2 |   |     2005-04-11 20:15 | Appointment with Some Person
+	  3 |   |     2005-04-11 16:31 | Call back client
+	  4 |   |     2005-04-12 16:16 | Do a good deed
+	  5 | r |               friday | Every Friday: beer-drinking competition
+	  6 | r |                 0:00 | Hey! It's twelve o'clock. Get to sleep!
 
-	id      = Notification ID (use with -i).
-	m       = Mode ('n'ormal, 'r'ecurring).
-	date    = The absolute ('2005-04-11 20:00') or relative ('friday') date & 
-	          time of the event.
-	message = The message to show when the event is triggered.
 	
+	The fields are:
 
-Legal stuff
+		id      = Notification ID (use with -i).
+		m       = Mode ('n'ormal, 'r'ecurring).
+		date    = The absolute ('2005-04-11 20:00') or relative ('friday') date & 
+				  time of the event.
+		message = The message to show when the event is triggered.
+
+2.3. Changing alerts
+--------------------
+
+	Here is an example of how to change an alert:
+	
+	$ alarm -c -i2 -t "thursday" -m "Thursday beer-drinking competition tonight"
+
+2.4. Deleting alerts
+--------------------
+
+	Here is an example of deleting an alert.
+
+	$ alarm -d -i2
+
+
+3. Legal stuff
 ----------------------------------------------------------------------------
 
 Copyright (C), 2005 Ferry Boender. Released under the General Public License
 For more information, see the COPYING file supplied with this program.                                                          
-
