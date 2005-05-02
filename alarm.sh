@@ -95,7 +95,9 @@ function alarmNew() {
 	fi
 	
 	echo "$A_NEWID|$A_MODE|$A_TIMESTAMP|$A_MESSAGE" >> $A_FILE
-	echo "New alert added (ID $A_NEWID)"
+	if [ "$SILENT" == "" ]; then
+		echo "New alert added (ID $A_NEWID)"
+	fi
 
 }
 
@@ -128,7 +130,9 @@ function alarmDelete() {
 	grep -v "^$A_ID|" $A_FILE > $TMPFILE 2>/dev/null 
 	mv $TMPFILE $A_FILE
 
-	echo "Deleted alert (ID $A_ID)"
+	if [ "$SILENT" == "" ]; then
+		echo "Deleted alert (ID $A_ID)"
+	fi
 }
 
 function alarmList() {
@@ -153,6 +157,8 @@ function alarmList() {
 }
 
 function daemon() {
+	SILENT=1
+
 	while true; do
 		# Current time
 		N_TIMESTAMP=`date +"%Y%m%d%H%M"`
@@ -166,19 +172,19 @@ function daemon() {
 				if [ "$A_MODE" == "n" ]; then
 					# Non-repetitive alarm; alert when overdue
 					if [ "$N_TIMESTAMP" -ge "$A_TIMESTAMP" ]; then
-						xmessage "$A_MESSAGE"
+						xmessage "A $A_MESSAGE"
 						alarmDelete "$A_ID"
 					fi
 				else
 					# Repetitive alarm; show only once at exact time
 					if [ "$N_TIMESTAMP" -eq "$A_TIMESTAMP" ]; then
-						xmessage "$A_MESSAGE"
+						xmessage "A $A_MESSAGE"
 					fi
 				fi
 			}
 			IFS=$IFS_OLD
 		done;
-		sleep 60
+		sleep 5
 	done
 }
 
@@ -245,9 +251,6 @@ while true; do
 		A_TIME=`echo "$REPLY" | cut -d"|" -f1`
 		A_MSG=`echo "$REPLY" | cut -d"|" -f2-`
 		A_TIMESTAMP=`date -d"$A_TIME" +"%Y%m%d%H%M"`
-
-		# DEBUGGING
-		echo "$A_TIME - $A_MSG - $A_TIMESTAMP - $N_TIMESTAMP";
 
 		# Trigger any alerts if need be
 		if [ "$N_TIMESTAMP" -ge "$A_TIMESTAMP" ]; then
