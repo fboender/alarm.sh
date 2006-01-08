@@ -72,6 +72,7 @@ function alarmNew() {
 		A_TIMESTAMP=`date -d"$A_TIMESPEC" +"%Y-%m-%d %H:%M" 2>/dev/null`
 		if [ "$?" -eq "1" ]; then
 			echo "Invalid date/time specified";
+			exit
 		fi
 		A_MODE='n'
 	else
